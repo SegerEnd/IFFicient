@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFFicient", "IFFicient.csproj", "{FD4255AF-38F4-44DB-86B5-D9F1A5EB6BB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFFicient", "IFFicient.csproj", "{11446A26-07A5-44DA-BC14-A793AF004BDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FD4255AF-38F4-44DB-86B5-D9F1A5EB6BB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD4255AF-38F4-44DB-86B5-D9F1A5EB6BB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD4255AF-38F4-44DB-86B5-D9F1A5EB6BB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD4255AF-38F4-44DB-86B5-D9F1A5EB6BB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11446A26-07A5-44DA-BC14-A793AF004BDA}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{11446A26-07A5-44DA-BC14-A793AF004BDA}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{11446A26-07A5-44DA-BC14-A793AF004BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11446A26-07A5-44DA-BC14-A793AF004BDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
