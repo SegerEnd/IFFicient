@@ -63,6 +63,18 @@ namespace IFFicient
         }
 
         /// <summary>
+        /// Creates a new IFFChunk object with the given chunk ID and data as a string.
+        /// The data will be converted to a byte array byte[] using ASCII encoding.
+        /// </summary>
+        /// <param name="chunkId">The 4-character string ID of the chunk (e.g. "NAME", "(c) ", "HOME", etc.)</param>
+        /// <param name="data">The string of data to set to the chunk</param>
+        public IFFChunk(string chunkId, string data)
+        {
+            ChunkId = chunkId;
+            AddData(data);
+        }
+
+        /// <summary>
         /// Sets the given data to the chunk including its size.
         /// </summary>
         /// <param name="data">The string of data to set to the chunk</param>

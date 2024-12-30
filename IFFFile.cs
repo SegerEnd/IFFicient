@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IFFicient
 {
@@ -12,7 +8,7 @@ namespace IFFicient
         /// <summary>
         /// List of chunks in the IFF file
         /// </summary>
-        private List<IFFChunk> Chunks { get; } = new List<IFFChunk>();
+        public List<IFFChunk> Chunks { get; } = new List<IFFChunk>();
 
         /// <summary>
         /// The FORM ID of the IFF file
@@ -24,6 +20,12 @@ namespace IFFicient
         /// PROP is a property list
         /// </remarks>
         private string FormID = "FORM";
+
+        /// <summary>
+        /// The name of the program that created the IFF file
+        /// Can be used to check if the file is intended for the specific program or to identify the program that created the file.
+        /// </summary>
+        public string ProgramName = "IFFicient by Seger";
 
         /// <summary>
         /// List of valid FORM IDs
@@ -39,6 +41,10 @@ namespace IFFicient
         /// <param name="chunk"></param>
         public void AddChunk(IFFChunk chunk)
         {
+            // Check if the data from chunk is correct format
+            if (chunk.ChunkId.Length != 4) throw new FormatException("Chunk ID must be 4 characters long");
+            if (chunk.Size != chunk.Data.Length) throw new FormatException("Chunk size does not match the actual size of the data");
+
             Chunks.Add(chunk);
         }
 
@@ -98,14 +104,14 @@ namespace IFFicient
             using var fs = new FileStream(filePath, FileMode.Open);
             using var br = new BinaryReader(fs);
 
-            var formId = new string(br.ReadChars(4));
-            //if (formId != FormID) throw new FormatException("Not a correct DOLL / IFF file");
-            if (!FormIDs.Contains(formId)) throw new FormatException("Not a correct DOLL / IFF file");
+            // Read the Program Name
+            iff.ProgramName = new string(br.ReadChars(24)).Trim();
 
-            ulong fileSize = br.ReadUInt64(); // Read and use the size 
+            iff.FormID = new string(br.ReadChars(4));
 
-            // Log or use fileSize and typeId for validation or processing
-            //Console.WriteLine($"Reading DOLL file with size: {fileSize}");
+            if (!FormIDs.Contains(iff.FormID)) throw new FormatException("Not a correct file format");
+
+            ulong fileSize = br.ReadUInt64();
 
             long expectedEndPosition = br.BaseStream.Position + (long)fileSize;
             while (br.BaseStream.Position < expectedEndPosition)
@@ -113,11 +119,11 @@ namespace IFFicient
                 iff.AddChunk(IFFChunk.ReadChunk(br));
             }
 
-            // Check if we've read exactly the amount of data specified by the size field
-            //if (br.BaseStream.Position != expectedEndPosition)
-            //{
-            //    Console.WriteLine("Warning: File size does not match the expected size.");
-            //}
+            //Check if we've read exactly the amount of data specified by the size field
+            if (br.BaseStream.Position != expectedEndPosition)
+            {
+                throw new FormatException("File size does not match the actual size of the file");
+            }
 
             return iff;
         }
@@ -129,6 +135,8 @@ namespace IFFicient
         /// <param name="bw"></param>
         private void WriteIFFHeader(BinaryWriter bw, string FormID)
         {
+            byte[] programName = Encoding.ASCII.GetBytes(ProgramName.PadRight(24, ' ')[0..24]);
+            bw.Write(programName);
             byte[] FORM = Encoding.ASCII.GetBytes(FormID.PadRight(4, ' '));
             bw.Write(FORM);
             ulong totalSize = (ulong)Chunks.Sum(c => c.Size + 8 + (c.Size % 2 == 0 ? 0 : 1)); // Total size calculation
@@ -136,16 +144,14 @@ namespace IFFicient
         }
 
         /// <summary>
-        /// Returns a string with the information of the IFF file
+        /// Returns a string with the information of the IFF file, with name, total size, amount of chunks and size per chunk
         /// </summary>
         public override string ToString()
         {
-            // give a string representation of the IFF file with name, total size, amount of chunks and size per chunk
-            //string result = $"File: {FormID}\n";
-            //result += $"Total size: {Chunks.Sum(c => c.Size + 8 + (c.Size % 2 == 0 ? 0 : 1))}\n";
-            //result += $"Amount of chunks: {Chunks.Count}\n";
-            //result += $"Size per chunk: {Chunks.Average(c => c.Size)}\n";
-            return $"File: {FormID}, Total size: {Chunks.Sum(c => c.Size + 8 + (c.Size % 2 == 0 ? 0 : 1))}, Amount of chunks: {Chunks.Count}, Size per chunk: {Chunks.Average(c => c.Size)}";
+            // Get the chunkid, size and data of each chunk
+            IEnumerable<string> chunkInfo = Chunks.Select(c => $"{c.ChunkId} ({c.Size} bytes): {Encoding.ASCII.GetString(c.Data)}");
+
+            return $"IFF File: {ProgramName}\nTotal size: {Chunks.Sum(c => c.Size)} bytes\nChunks: {Chunks.Count}\n{string.Join("\n", chunkInfo)}";
         }
     }
 }
