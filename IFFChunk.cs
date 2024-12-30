@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace IFFicient
 {
     public class IFFChunk
@@ -108,6 +107,26 @@ namespace IFFicient
             return new IFFChunk(chunkId, size, data);
         }
 
+        public static IFFFile IsIFFFile(IFFChunk chunk)
+        {
+            // Check if the data of the chunk is containing another IFF file inside
+            byte[] data = chunk.Data;
+            try
+            {
+                IFFFile iff = IFFFile.ReadFromBytes(data);
+                
+                if (!string.IsNullOrEmpty(iff.ProgramName) && iff.Chunks.Count > 0)
+                {
+                    return iff;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Writes the chunk to the BinaryWriter at its current position
         /// </summary>
@@ -119,5 +138,6 @@ namespace IFFicient
             bw.Write(Data);
             if (Data.Length % 2 != 0) bw.Write((byte)0); // Padding
         }
+
     }
 }
