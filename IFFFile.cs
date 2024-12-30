@@ -9,6 +9,8 @@ namespace IFFicient
         /// </summary>
         public List<IFFChunk> Chunks { get; } = new List<IFFChunk>();
 
+        private string _formID = "FORM";
+
         /// <summary>
         /// The FORM ID of the IFF file
         /// </summary>
@@ -18,7 +20,20 @@ namespace IFFicient
         /// CAT is a catalog of chunks,
         /// PROP is a property list
         /// </remarks>
-        public string FormID = "FORM";
+        public string FormID
+        {
+            get => _formID;
+            set
+            {
+                _formID = value.PadRight(4, ' ')[0..4];
+
+                // when the formId is not in the FormIDs list add it to the list
+                if (!IFFFile.FormIDs.Contains(FormID))
+                {
+                    IFFFile.FormIDs = IFFFile.FormIDs.Append(FormID).ToArray();
+                }
+            }
+        }
 
         /// <summary>
         /// The name of the program that created the IFF file.
@@ -47,13 +62,7 @@ namespace IFFicient
 
         public IFFFile(string formId)
         {
-            // add padding and truncate if necessary
-            FormID = formId.PadRight(4, ' ')[0..4];
-            // when the formId is not in the FormIDs list add it to the list
-            if (!IFFFile.FormIDs.Contains(FormID))
-            {
-                IFFFile.FormIDs = IFFFile.FormIDs.Append(FormID).ToArray();
-            }
+            FormID = formId;
         }
 
         /// <summary>
