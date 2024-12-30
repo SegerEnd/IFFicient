@@ -56,15 +56,6 @@ namespace IFFicient
         /// </summary>
         public static string[] FormIDs = { "FORM", "LIST", "CAT ", "PROP" };
 
-        public IFFFile()
-        {
-        }
-
-        public IFFFile(string formId)
-        {
-            FormID = formId;
-        }
-
         /// <summary>
         /// Adds a chunk to the IFF file chunks list
         /// </summary>
